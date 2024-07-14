@@ -4,8 +4,9 @@ import GenreSelect from './GenreSelect';
 import YearRangeInput from './YearRangeInput';
 import TagsInput from './TagsInput';
 import RecommendationsList from './RecommendationsList';
+import ChatComponent from './ChatComponent';
 import '../styles/RecommendationForm.css';
-import { getRecommendations } from '../services/api';
+import { getRecommendations, startChat } from '../services/api';
 
 // Generos de peliculas
 const genres = [
@@ -20,7 +21,6 @@ const genres = [
   { id: 'other', name: 'Otros' },
 ];
 
-// Estados iniciales
 const RecommendationForm = () => {
   const [preferences, setPreferences] = useState({
     favoriteMovies: [],
@@ -36,6 +36,8 @@ const RecommendationForm = () => {
   const [yearRange, setYearRange] = useState({ startYear: '', endYear: '' });
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
+  const [chatInitialized, setChatInitialized] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
 
   const handleYearRangeChange = (e) => {
     const { name, value } = e.target;
@@ -84,15 +86,29 @@ const RecommendationForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const recs = await getRecommendations(preferences);
-      setRecommendations(recs); // Set all recommendations received from API
-    } catch (error) {
-      console.error('Error getting recommendations:', error);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const recs = await getRecommendations(preferences);
+    setRecommendations(recs);
+
+    if (recs.length > 0) {
+      const initialMessage = `
+        Basado en las siguientes preferencias:
+        Películas Favoritas: ${preferences.favoriteMovies.join(', ')}
+        Género Preferido: ${preferences.preferredGenre === 'other' ? preferences.otherGenre : preferences.preferredGenre}
+        Rango de Años: ${yearRange.startYear} - ${yearRange.endYear}
+        Etiquetas: ${tags.join(', ')}
+        Por favor proporciona ${preferences.resultsCount} recomendaciones de películas con descripciones cortas.
+      `;
+      const chatResponse = await startChat(initialMessage);
+      setChatMessages([{ role: 'model', text: chatResponse.message }]);
+      setChatInitialized(true);
     }
-  };
+  } catch (error) {
+    console.error('Error getting recommendations:', error);
+  }
+};
 
   const handleTagInputChange = (e) => {
     setTagInput(e.target.value);
@@ -164,8 +180,7 @@ const RecommendationForm = () => {
 
         <button type="submit">Generar</button>
       </form>
-
-      {recommendations.length > 0 && <RecommendationsList recommendations={recommendations} />}
+      {chatInitialized && <ChatComponent initialMessages={chatMessages} />}
     </div>
   );
 };

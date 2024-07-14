@@ -27,6 +27,7 @@
     text-align: center;
     padding: 0px;
     padding-bottom: 3px;
+    margin-left: 10px;
     justify-content: center; /* Added this line */
     align-items: center; /* Added this line */
 }

@@ -3,7 +3,8 @@
     align-items: center;
     gap: 30px;
     width: 60%;
-
+    margin-left: 20%;
+    margin-right: 20%;
   }
 
 .form-group-year{
