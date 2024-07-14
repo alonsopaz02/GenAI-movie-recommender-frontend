@@ -20,6 +20,7 @@ export const sendMessage = async (message) => {
 export const getRecommendations = async (preferences) => {
   try {
     const response = await api.post('/api/recommendations', preferences);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error getting recommendations:', error);

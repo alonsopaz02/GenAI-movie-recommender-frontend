@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
-import { getRecommendations } from '../services/api';
+import FavoriteMoviesInput from './FavoriteMoviesInput';
+import GenreSelect from './GenreSelect';
+import YearRangeInput from './YearRangeInput';
+import TagsInput from './TagsInput';
+import RecommendationsList from './RecommendationsList';
 import '../styles/RecommendationForm.css';
+import { getRecommendations } from '../services/api';
 
+// Generos de peliculas
 const genres = [
   { id: 28, name: 'Acción' },
   { id: 12, name: 'Aventura' },
@@ -14,6 +20,7 @@ const genres = [
   { id: 'other', name: 'Otros' },
 ];
 
+// Estados iniciales
 const RecommendationForm = () => {
   const [preferences, setPreferences] = useState({
     favoriteMovies: [],
@@ -23,8 +30,20 @@ const RecommendationForm = () => {
     resultsCount: 3,
     language: 'en-US',
   });
+
   const [recommendations, setRecommendations] = useState([]);
   const [movieInput, setMovieInput] = useState('');
+  const [yearRange, setYearRange] = useState({ startYear: '', endYear: '' });
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
+
+  const handleYearRangeChange = (e) => {
+    const { name, value } = e.target;
+    setYearRange(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -68,14 +87,27 @@ const RecommendationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const selectedGenre = genres.find((genre) => genre.id.toString() === preferences.preferredGenre);
-      const genreId = selectedGenre ? selectedGenre.id : null;
-      const query = preferences.preferredGenre === 'other' ? preferences.otherGenre : '';
-      const recs = await getMovieRecommendations(genreId, query, preferences.language);
-      setRecommendations(recs.slice(0, preferences.resultsCount)); // Limit results based on user preference
+      const recs = await getRecommendations(preferences);
+      setRecommendations(recs); // Set all recommendations received from API
     } catch (error) {
       console.error('Error getting recommendations:', error);
     }
+  };
+
+  const handleTagInputChange = (e) => {
+    setTagInput(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+      setTags([...tags, tagInput.trim()]);
+      setTagInput(''); // Limpiar el campo de entrada
+    }
+  };
+
+  const removeTag = (indexToRemove) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -83,42 +115,35 @@ const RecommendationForm = () => {
       <form className="recommendation-form" onSubmit={handleSubmit}>
         <h2>Recomendador de películas</h2>
         <p>Obtén recomendaciones de películas impulsadas por IA basadas en tus películas y programas de TV favoritos</p>
-        <div className="form-group">
-          <label>Películas o programas de TV que te gustan</label>
-          <input
-            type="text"
-            name="movieInput"
-            value={movieInput}
-            onChange={handleMovieInput}
-            onKeyPress={handleMovieKeyPress}
-            placeholder="Escribe una película y presiona Enter"
-          />
-          <div className="favorite-movies-list">
-            {preferences.favoriteMovies.map((movie, index) => (
-              <span key={index} className="favorite-movie-item">
-                {movie} <button type="button" onClick={() => handleRemoveMovie(movie)}>x</button>
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="form-group">
-          <label>Género preferido</label>
-          <select className="genre-select" name="preferredGenre" value={preferences.preferredGenre} onChange={handleGenreChange}>
-            <option value="">Selecciona un género</option>
-            {genres.map((genre) => (
-              <option key={genre.id} value={genre.id.toString()}>{genre.name}</option>
-            ))}
-          </select>
-          {preferences.preferredGenre === 'other' && (
-            <input
-              type="text"
-              name="otherGenre"
-              placeholder="Ingresa el género"
-              value={preferences.otherGenre}
-              onChange={handleChange}
-            />
-          )}
-        </div>
+
+        <FavoriteMoviesInput
+          movieInput={movieInput}
+          handleMovieInput={handleMovieInput}
+          handleMovieKeyPress={handleMovieKeyPress}
+          favoriteMovies={preferences.favoriteMovies}
+          handleRemoveMovie={handleRemoveMovie}
+        />
+
+        <GenreSelect
+          preferredGenre={preferences.preferredGenre}
+          handleGenreChange={handleGenreChange}
+          otherGenre={preferences.otherGenre}
+          handleChange={handleChange}
+        />
+
+        <YearRangeInput
+          yearRange={yearRange}
+          handleYearRangeChange={handleYearRangeChange}
+        />
+
+        <TagsInput
+          tags={tags}
+          tagInput={tagInput}
+          handleTagInputChange={handleTagInputChange}
+          handleKeyDown={handleKeyDown}
+          removeTag={removeTag}
+        />
+
         <div className="form-group">
           <label>Número de resultados</label>
           <select name="resultsCount" value={preferences.resultsCount} onChange={handleChange}>
@@ -127,6 +152,7 @@ const RecommendationForm = () => {
             <option value={5}>5</option>
           </select>
         </div>
+
         <div className="form-group">
           <label>Idioma</label>
           <select name="language" value={preferences.language} onChange={handleChange}>
@@ -135,21 +161,11 @@ const RecommendationForm = () => {
             <option value="fr-FR">Francés</option>
           </select>
         </div>
+
         <button type="submit">Generar</button>
       </form>
 
-      {recommendations.length > 0 && (
-        <div className="recommendations">
-          <h3>Recomendaciones:</h3>
-          <ul>
-            {recommendations.map((rec, index) => (
-              <li key={index}>
-                <strong>{rec.title}</strong>: {rec.overview}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {recommendations.length > 0 && <RecommendationsList recommendations={recommendations} />}
     </div>
   );
 };

@@ -1,0 +1,32 @@
+.favorite-movies-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.favorite-movie-item {
+    background-color: #5c0b778f;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 3px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+.favorite-movie-item:hover {
+    background-color: #5b1174;
+}
+
+.favorite-movie-item button {
+    background-color: field;
+    width: 30px;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    padding: 0px;
+    padding-bottom: 3px;
+    justify-content: center; /* Added this line */
+    align-items: center; /* Added this line */
+}

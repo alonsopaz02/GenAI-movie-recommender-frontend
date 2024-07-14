@@ -1,0 +1,29 @@
+.year-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 60%;
+
+  }
+
+.form-group-year{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.form-group-year label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group-year input {
+    width: 80px;
+    padding: 8px;
+    border: white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}

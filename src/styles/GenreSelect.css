@@ -1,0 +1,10 @@
+.genre-select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.genre-select option {
+    cursor: pointer;
+}

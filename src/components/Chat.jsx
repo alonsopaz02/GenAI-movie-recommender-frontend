@@ -1,56 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { sendMessage, getRecommendations } from '../services/api';
+import React, { useState } from 'react';
+import { sendMessage } from '../services/api';
 import '../styles/Chat.css';
 
-function Chat({ preferences }) {
-  const [inputText, setInputText] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
 
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      try {
-        const recommendations = await getRecommendations(preferences);
-        setChatHistory([...chatHistory, ...recommendations]);
-      } catch (error) {
-        console.error('Error getting recommendations:', error);
-      }
-    };
-
-    fetchRecommendations();
-  }, [preferences]);
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
 
   const handleSendMessage = async () => {
-    if (inputText.trim() === '') return;
+    if (input.trim()) {
+      const newMessage = { sender: 'user', text: input.trim() };
+      setMessages([...messages, newMessage]);
+      setInput('');
 
-    try {
-      const responseData = await sendMessage(inputText);
-      setChatHistory([...chatHistory, { text: inputText, fromUser: true }, { text: responseData, fromUser: false }]);
-      setInputText('');
-    } catch (error) {
-      console.error('Error sending message:', error);
+      try {
+        const response = await sendMessage(input.trim());
+        const aiMessage = { sender: 'ai', text: response.message };
+        setMessages([...messages, newMessage, aiMessage]);
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
   return (
     <div className="chat-container">
-      <div className="chat-history">
-        {chatHistory.map((message, index) => (
-          <div key={index} className={message.fromUser ? 'user-message' : 'ai-message'}>
-            {message.text}
+      <div className="chat-messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`chat-message ${msg.sender}`}>
+            {msg.text}
           </div>
         ))}
       </div>
-      <div className="input-container">
+      <div className="chat-input">
         <input
           type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Type your message..."
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Escribe un mensaje..."
         />
-        <button onClick={handleSendMessage}>Send</button>
+        <button onClick={handleSendMessage}>Enviar</button>
       </div>
     </div>
   );
-}
+};
 
 export default Chat;

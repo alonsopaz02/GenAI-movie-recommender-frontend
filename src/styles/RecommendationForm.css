@@ -40,38 +40,6 @@
   margin-bottom: 5px;
 }
 
-.form-group input[type="checkbox"] {
-  width: auto;
-  margin-right: 10px;
-}
-
-.form-group .genre-select {
-  width: 50%;
-}
-
-.favorite-movies-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.favorite-movie-item {
-  background-color: #7289da;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-}
-
-.favorite-movie-item button {
-  background: none;
-  border: none;
-  color: white;
-  margin-left: 5px;
-  cursor: pointer;
-}
 
 button {
   background-color: #5865f2;
@@ -81,34 +49,10 @@ button {
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 button:hover {
   background-color: #4752c4;
-}
-
-.recommendations {
-  margin-top: 20px;
-  background-color: #23272a;
-  padding: 20px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 500px;
-}
-
-.recommendations h3 {
-  margin-bottom: 10px;
-}
-
-.recommendations ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.recommendations li {
-  margin-bottom: 10px;
-}
-
-.recommendations li strong {
-  color: #7289da;
 }

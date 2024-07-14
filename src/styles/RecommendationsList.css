@@ -1,0 +1,12 @@
+.recommendations{
+    width:50%
+}
+
+.recommendations ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .recommendations li {
+    margin-bottom: 8px;
+  }
