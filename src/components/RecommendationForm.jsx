@@ -94,7 +94,9 @@ const handleSubmit = async (e) => {
 
     if (recs.length > 0) {
       const initialMessage = `
-        Basado en las siguientes preferencias:
+        Eres un chatbot amigable que proporciona recomendaciones de peliculas.
+        Manten tus respuestas algo cortas y pregunta siempre si el usuario necesita algo más.
+        Recomienda peliculas basadas en las siguientes preferencias:
         Películas Favoritas: ${preferences.favoriteMovies.join(', ')}
         Género Preferido: ${preferences.preferredGenre === 'other' ? preferences.otherGenre : preferences.preferredGenre}
         Rango de Años: ${yearRange.startYear} - ${yearRange.endYear}
