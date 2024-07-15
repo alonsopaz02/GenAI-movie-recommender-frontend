@@ -3,8 +3,19 @@
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
+    background-color: field;
+    border: 1px solid #ccc;
+    font-family: "Outfit", sans-serif;
+    font-size: 14px;
+    color: #ffffff;
 }
 
 .genre-select option {
     cursor: pointer;
+    background-color: #232146;
+    color: #ffffff;
+}
+
+.genre-select option:hover {
+    background-color: #e6e6e6;
 }

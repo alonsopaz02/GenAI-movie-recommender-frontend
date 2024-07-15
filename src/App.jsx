@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Chat from './components/ChatComponent';
 import RecommendationForm from './components/RecommendationForm';
 import './styles/App.css';
 
